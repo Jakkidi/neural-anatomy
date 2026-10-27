@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--PAGE-->
+<title>Neural Anatomy</title>
+<link rel="stylesheet" href="src/ui/kit.css">
+<link rel="stylesheet" href="src/ui/app.css">
+<!--/HEAD-->
+</head>
+<body>
+<!--BODY-->
+<div class="na-app" id="app">
+  <header class="na-top">
+    <div class="na-brand">
+      <svg class="na-mark" viewBox="0 0 28 28" aria-hidden="true">
+        <path class="na-mark-fill" d="M14 3 25 9v10L14 25 3 19V9Z"/>
+        <path d="M14 3 25 9v10L14 25 3 19V9Z"/><path d="M3 9l11 6 11-6M14 15v10"/>
+        <path d="M3 14l11 6 11-6" opacity=".45"/>
+      </svg>
+      <h1>Neural Anatomy</h1>
+    </div>
+    <p class="na-tagline">A language model drawn as a machine you can open. The plates are its real weights, and they light up with what it computes for your prompt.</p>
+    <div class="na-top-controls">
+      <label class="na-field" for="model-select"><span>Model</span>
+        <select id="model-select"></select>
+      </label>
+      <div class="na-seg" role="group" aria-label="Theme" id="theme-choice">
+        <button type="button" data-choice="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-choice="light" aria-pressed="false">Light</button>
+        <button type="button" data-choice="dark" aria-pressed="false">Dark</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="na-main">
+    <div class="na-work">
+      <div class="na-strip">
+        <section class="na-panel" id="panel-prompt" aria-labelledby="h-prompt">
+          <h2 id="h-prompt"><label for="prompt-input">Prompt</label></h2>
+          <textarea id="prompt-input" rows="2" spellcheck="false" autocomplete="off"></textarea>
+          <div class="na-row">
+            <button type="button" class="na-button" data-primary id="run-button">Run</button>
+            <span class="na-meta" id="prompt-meta"></span>
+          </div>
+          <div class="na-chips" id="prompt-samples" aria-label="Example prompts"></div>
+        </section>
+
+        <section class="na-panel" id="panel-tokens" aria-labelledby="h-tokens">
+          <h2 id="h-tokens">Tokens</h2>
+          <div class="na-tokens" id="token-strip" role="listbox" aria-label="Tokens. Choose one to see its activations." tabindex="0"></div>
+          <p class="na-note" id="token-note"></p>
+        </section>
+      </div>
+
+      <section class="na-figures" aria-label="Figures">
+        <div class="na-figure-bar">
+          <div class="na-tabs" role="tablist" aria-label="Figure" id="figure-tabs"></div>
+        </div>
+        <div id="figure-host"></div>
+      </section>
+    </div>
+
+    <aside class="na-bench" aria-label="Bench">
+      <section class="na-panel" id="panel-model" aria-labelledby="h-model">
+        <h2 id="h-model">Weights</h2>
+        <p class="na-model-line" id="model-blurb"></p>
+        <p class="na-model-line" id="model-summary" hidden></p>
+        <div class="na-actions" id="load-actions">
+          <button type="button" class="na-button" data-primary id="load-button">Load weights</button>
+          <label class="na-button" for="weights-file" id="file-button">Use a file
+            <input type="file" id="weights-file" accept=".safetensors" class="na-visually-hidden">
+          </label>
+          <button type="button" class="na-button" id="random-button">Random weights</button>
+          <button type="button" class="na-button" id="forget-button" hidden>Remove saved copy</button>
+        </div>
+        <div class="na-progress" id="load-progress" hidden>
+          <div class="na-progress-track"><div class="na-progress-bar" id="load-bar"></div></div>
+          <span id="load-text"></span>
+        </div>
+        <p class="na-note" id="model-status" role="status"></p>
+        <p class="na-note na-check" id="model-check" role="status"></p>
+        <p class="na-error" id="model-error" role="alert" hidden></p>
+        <button type="button" class="na-link" id="model-toggle" aria-expanded="true" hidden>Hide</button>
+      </section>
+
+      <section class="na-panel" id="panel-next" aria-labelledby="h-next">
+        <h2 id="h-next">Next token</h2>
+        <p class="na-note" id="next-note">What the model expects after the chosen token.</p>
+        <ol class="na-next" id="next-list"></ol>
+        <div class="na-row">
+          <button type="button" class="na-button" id="step-button">Add a token</button>
+          <button type="button" class="na-button" id="generate-button">Add 12</button>
+          <button type="button" class="na-button" id="stop-button" hidden>Stop</button>
+        </div>
+        <label class="na-slider" for="temperature-input"><span>Temperature</span>
+          <input type="range" id="temperature-input" min="0" max="1.5" step="0.05" value="0">
+          <output id="temperature-output" for="temperature-input">0 · most likely</output>
+        </label>
+      </section>
+    </aside>
+  </main>
+
+
+  <footer class="na-foot">
+    <p><span id="foot-where">Runs entirely in this browser.</span> Drawn with the <a href="https://github.com/wheresryan22/anatomy">Anatomy</a> kit by Ryan (MIT). GPT-2 weights and vocabulary are OpenAI's, released under the MIT licence.</p>
+  </footer>
+</div>
+<script type="module" src="src/app.js"></script>
+<!--/BODY-->
+</body>
+</html>

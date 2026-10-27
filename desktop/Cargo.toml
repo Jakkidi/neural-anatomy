@@ -1,0 +1,19 @@
+# The desktop app: a Rust engine and a Rust host for the figures in ../src.
+# Neither crate depends on anything outside the standard library, so
+# `cargo build --release` needs no downloads.
+[workspace]
+members = ["engine", "app"]
+# tauri/ is an optional wrapper with its own dependencies; see tauri/README.md
+exclude = ["tauri"]
+resolver = "2"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 4
+debug = false
+
+# The forward pass is unusably slow without optimisation, so a plain
+# `cargo run` is optimised too.
+[profile.dev]
+opt-level = 2

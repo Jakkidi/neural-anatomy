@@ -1,0 +1,16 @@
+{
+  "name": "neural-anatomy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A language model drawn as a machine you can open: real weights, real activations, in the browser.",
+  "type": "module",
+  "scripts": {
+    "start": "node serve.mjs",
+    "test": "node test/tokenizer.test.mjs && node test/engine.test.mjs && node test/flash.test.mjs",
+    "bench": "node tools/bench.mjs",
+    "verify": "node tools/verify-real.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

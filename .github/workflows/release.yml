@@ -1,0 +1,57 @@
+# Push a tag such as v1.0.0 to build the desktop app for Windows, macOS
+# (one universal file for Apple silicon and Intel) and Linux, and attach the
+# programs to a GitHub release.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            asset: neural-anatomy-windows-x64.zip
+          - os: macos-latest
+            asset: neural-anatomy-macos-universal.zip
+          - os: ubuntu-latest
+            asset: neural-anatomy-linux-x64.zip
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ runner.os == 'macOS' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - name: Build
+        run: |
+          mkdir -p out
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            cargo build --release --target aarch64-apple-darwin
+            cargo build --release --target x86_64-apple-darwin
+            lipo -create -output out/neural-anatomy \
+              target/aarch64-apple-darwin/release/neural-anatomy \
+              target/x86_64-apple-darwin/release/neural-anatomy
+          elif [ "$RUNNER_OS" = "Windows" ]; then
+            cargo build --release
+            cp target/release/neural-anatomy.exe out/
+          else
+            cargo build --release
+            cp target/release/neural-anatomy out/
+          fi
+          cp README.md out/README-desktop.md
+      - name: Zip
+        run: |
+          cd out
+          if [ "$RUNNER_OS" = "Windows" ]; then 7z a "../${{ matrix.asset }}" . ; else zip -r "../${{ matrix.asset }}" . ; fi
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: desktop/${{ matrix.asset }}

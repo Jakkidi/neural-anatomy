@@ -1,0 +1,10 @@
+local/
+dist/
+hosted-preview.html
+desktop/target/
+desktop/tauri/target/
+desktop/tauri/gen/
+desktop/build-log.txt
+.DS_Store
+Thumbs.db
+node_modules/

@@ -1,0 +1,18 @@
+[package]
+name = "neural-anatomy"
+version = "0.1.0"
+edition = "2021"
+description = "Neural Anatomy for the desktop: a Rust engine and host for the figures."
+publish = false
+build = "build.rs"
+
+[lib]
+name = "neural_anatomy"
+path = "src/lib.rs"
+
+[[bin]]
+name = "neural-anatomy"
+path = "src/main.rs"
+
+[dependencies]
+na-engine = { path = "../engine" }

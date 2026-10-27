@@ -1,0 +1,70 @@
+# Tests the browser engine and builds and tests the desktop app on Windows,
+# macOS and Linux. The built programs are attached to each run as artifacts.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  web:
+    name: Browser engine (Node)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install numpy
+      - name: Tokenizer, engine against numpy, FlashAttention
+        run: npm test
+
+  desktop:
+    name: Desktop app (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows
+            os: windows-latest
+          - name: macOS
+            os: macos-latest
+          - name: Linux
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: numpy, for the engine's reference test
+        run: |
+          python -m pip install numpy
+          # the test runs `python3`; Windows only has `python`
+          if ! command -v python3 >/dev/null; then cp "$(command -v python)" "$(dirname "$(command -v python)")/python3.exe"; fi
+      - name: Build
+        run: cargo build --release
+      - name: Test (engine against numpy, tokenizer)
+        run: cargo test --release
+      - name: Start the app and ask it for its page
+        run: |
+          ./target/release/neural-anatomy --no-window --port 4199 --data-dir "$RUNNER_TEMP/na" &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:4199/ -o page.html && break; sleep 1; done
+          grep -q "Neural Anatomy" page.html
+          kill %1 || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: neural-anatomy-${{ runner.os }}
+          path: |
+            desktop/target/release/neural-anatomy
+            desktop/target/release/neural-anatomy.exe
+          if-no-files-found: error

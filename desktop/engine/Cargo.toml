@@ -1,0 +1,10 @@
+[package]
+name = "na-engine"
+version = "0.1.0"
+edition = "2021"
+description = "Loads a model checkpoint and runs it while handing out every activation."
+publish = false
+
+[lib]
+name = "na_engine"
+path = "src/lib.rs"

@@ -1,0 +1,28 @@
+# OPTIONAL, AND NOT COMPILED WHERE IT WAS WRITTEN. See README.md in this folder.
+#
+# The same app as ../app, shown in the operating system's own web view
+# (WebView2 on Windows, WKWebView on macOS) instead of a browser's app window,
+# and packaged as an installer. Unlike ../app this needs crates from crates.io.
+[package]
+name = "neural-anatomy-desktop"
+version = "0.1.0"
+edition = "2021"
+description = "Neural Anatomy in a native window"
+
+# keeps this crate out of the workspace one folder up
+[workspace]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+neural-anatomy = { path = "../app" }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+
+# the forward pass is unusably slow without optimisation
+[profile.dev]
+opt-level = 2
